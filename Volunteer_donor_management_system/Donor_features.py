@@ -52,4 +52,20 @@ def search_donor():
         eligible = is_eligible_to_donate(last_donation_date)
         print(f"{donor_id: <5} {name: <20} {blood_type: <10} {phone: <15} {location: <20} {last_donation_date: <15} {'Yes' if eligible else 'No'}")
     print()
+
+def is_eligible_to_donate(last_donation_date):
+    """
+    Check if a donor is eligible to donate blood based on the last donation date.
+    A donor is eligible if they have never donated before or if it has been at least 90 days since their last donation.
+    """
+    if not last_donation_date:
+        return True      # Never donated before, eligible to donate blood
+    
+    try:
+        last_donation = datetime.strptime(last_donation_date, "%Y-%m-%d")
+    except ValueError:
+        return False     # Invalid date format, not eligible to donate blood
+    return datetime.now() - last_donation >= timedelta(days = 90)
+
+
  
