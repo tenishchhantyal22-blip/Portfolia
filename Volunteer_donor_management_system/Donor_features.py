@@ -38,7 +38,7 @@ def search_donor():
     cur = conn.cursor()
     cur.execute(query, params)
     results = cur.fetchall()
-    con.close()
+    conn.close()
 
     if not results:
         print("\nNo donors found matching to those details and criteria \n")
