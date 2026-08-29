@@ -1,24 +1,19 @@
-PROJECT: "Volunteers and Blood donors Management System"
+Junior Red Cross Volunteer & Donor Management System
 
-Description:-
-  1. This project helps to save the data of volunteering and blood donations properly. In contrast to paper based database system it helps to organize data of previous volunteering and blood donations.
-  2. First I have setup database that include basic details of donors and volunteer. For example name, blood type, location, address,           phone number, last date of donations etc.
+This is a command-line program built in Python for managing two of the most basic operational needs of a Red Cross chapter: tracking blood donors and tracking volunteer hours. It runs entirely in the terminal, stores everything in a local SQLite database file called red_cross.db, and doesn't need internet access or any external service to work.
 
-  3. It will ask the user for what purpose is he inquiring: Volunteering or Blood donations. 
+The program starts by calling setup_database(), which creates two tables if they don't already exist — one for donors, one for volunteers. Nothing fancy here: donors get a name, blood group, phone number, location, and last donation date, while volunteers get a name, the event they helped with, hours logged, and a date. The id fields auto-increment, so every record gets a unique identifier without anyone having to think about it.
 
-  4. If user is for Volunteering it will ask:
-                                    a. Create user's unique id number,
-                                    b. Name of user,
-                                    b. Which Event does he/she want to do volunteering,
-                                    c. Hours,
-                                    d. Date of Volunteering.
+From there, the whole thing is menu-driven. When you run the script, main() loops forever showing five options — add a donor, search donors, log volunteer hours, view a volunteer report, or exit — until the user picks 5 and the loop breaks.
 
- 5. If user is for Blood Donation it will ask:
-                                    a. Create user's one unique id number,
-                                    b. Name of user,
-                                    c. Blood Group,
-                                    d. Phone Number,
-                                    e. Location/Address,
-                                    f. Last donation date,
-                                    g. email address
+Adding a donor is straightforward: it just prompts for each field one at a time and inserts the row. Nothing checks whether the phone number looks like a phone number or whether the blood group is actually a valid one (A+, O-, etc.) — it just uppercases whatever you type and stores it. That's fine for a small volunteer-run project, but it's worth knowing the data quality depends entirely on whoever's typing.
 
+Searching is where a little more logic comes in. You can filter by blood group, by location, by both, or by neither (which just returns everyone). The location search uses LIKE with wildcards, so "kath" would match "Kathmandu." For every donor returned, the search also runs is_eligible_to_donate(), which checks whether it's been at least 90 days since their last donation — the standard interval blood banks use between donations. If someone's never donated, they're automatically eligible. If the date field is garbled or unparseable, the function currently treats that as eligible too, which is a small quirk worth flagging: a bad date shouldn't default to "yes, they can donate," but right now it does.
+
+The volunteer side has a nicer feature built in. log_volunteer_hours() records an entry, and if no date is given, it just uses today's date rather than leaving the field blank. After logging, it immediately calls check_and_issue_certificate(), which pulls the volunteer's total hours across all their logged sessions and checks that total against three milestones: 20, 50, and 100 hours. If they've crossed one, the function writes out a plain text certificate file named after the volunteer and the milestone — something like certificate_Jane_Doe_50_hours.txt — with a short congratulatory message.
+
+One thing to know about how this works: because the file-writing uses mode "x" (exclusive creation), the certificate only gets generated once per milestone, ever. If Jane crosses 50 hours today, the file gets created. If she logs more hours next week and her total climbs to 75, nothing new happens for the 50-hour certificate — it already exists — but there's no 75-hour milestone, so she just waits until she crosses 100. This is a genuinely thoughtful bit of design; it avoids re-issuing the same certificate over and over every time someone logs more hours after already passing a threshold.
+
+Finally, view_volunteer_report() gives a bird's-eye view: grouped by name, it shows total hours donated and how many separate events each person has logged, sorted so the most active volunteers show up at the top. It's a simple GROUP BY and SUM, but it's the kind of thing a chapter coordinator would actually want to glance at before a meeting.
+
+As for the rough edges: there's no way to edit or delete a record once it's entered, so a typo in a donor's phone number is permanent unless someone edits the database directly. There's also no input validation beyond stripping whitespace — hours accepted as text could crash the program if someone types a letter instead of a number, since float() will throw an error with no handling around it. The blood group field accepts anything, not just the eight standard types. None of these are unusual for an early-stage internal tool, but they're the natural next things to shore up if this program is going to be used by more than a couple of people, or trusted with real donor data over time.
