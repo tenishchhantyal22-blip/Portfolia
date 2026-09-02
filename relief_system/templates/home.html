@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Disaster Relief System</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</html>
-</head>
-<body>
-    <h1> Welcome to the Disaster Relief Coordination System</h1>
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1>Welcome to the Disaster Relief Coordination System</h1>
     <p>Connecting volunteers to those who need help.</p>
-</body>
-</html>
+    <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+    <a href="{{ url_for('register') }}" class="btn btn-outline-primary">Register</a>
+</div>
+{% endblock %}
