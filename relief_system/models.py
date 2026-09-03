@@ -18,7 +18,7 @@ class Request(db.Model):
     resource_type = db.Column(db.String(50))
     quantity = db.Column(db.Integer)
     location = db.Column(db.String(100))
-    Urgency = db.Column(db.String(20))
+    urgency = db.Column(db.String(20))
     status = db.Column(db.String(20), default="open")
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 

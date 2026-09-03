@@ -65,8 +65,9 @@ def logout():
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    return f"<h1>Welcome, {current_user.name}!</h1><p>Your role: {current_user.role}</p>"
-
+    open_requests = Request.query.filter_by(status="open").all()
+    return render_template("dashboard.html", requests=open_requests)
+    
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

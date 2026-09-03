@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5">
+    <h2>Welcome, {{ current_user.name }}!</h2>
+    <p class="text-muted">Open relief requests near you and elsewhere:</p>
+
+    <table class="table table-striped table-bordered">
+        <thead class="table-dark">
+            <tr>
+                <th>Posted By</th>
+                <th>Resource Type</th>
+                <th>Quantity</th>
+                <th>Location</th>
+                <th>Urgency</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in requests %}
+            <tr>
+                <td>{{ r.posted_by }}</td>
+                <td>{{ r.resource_type }}</td>
+                <td>{{ r.quantity }}</td>
+                <td>{{ r.location }}</td>
+                <td>
+                    {% if r.urgency == "High" %}
+                        <span class="badge bg-danger">High</span>
+                    {% elif r.urgency == "Medium" %}
+                        <span class="badge bg-warning text-dark">Medium</span>
+                    {% else %}
+                        <span class="badge bg-secondary">Low</span>
+                    {% endif %}
+                </td>
+                <td><button class="btn btn-primary btn-sm">Help</button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if requests|length == 0 %}
+        <p class="text-center text-muted">No open requests right now. Check back later!</p>
+    {% endif %}
+
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-danger mt-3">Logout</a>
+</div>
+{% endblock %}
