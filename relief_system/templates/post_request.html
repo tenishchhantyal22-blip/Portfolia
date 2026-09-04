@@ -1,0 +1,52 @@
+#this contain design for post request activities.
+#it includes resources that people or victim are requesting 
+#it also separate urgency level, like high, medium and low
+
+
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-5" style="max-width: 500px;">
+  <h2>Post a Relief Request</h2>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST">
+    <div class="mb-3">
+      <label>Posted By (Camp/Organization Name)</label>
+      <input type="text" name="posted_by" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Resource Type</label>
+      <select name="resource_type" class="form-select" required>
+        <option value="Food">Food</option>
+        <option value="Medicine">Medicine</option>
+        <option value="Shelter">Shelter</option>
+        <option value="Blankets">Blankets</option>
+      </select>
+    </div>
+    <div class="mb-3">
+      <label>Quantity</label>
+      <input type="number" name="quantity" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Location</label>
+      <input type="text" name="location" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label>Urgency</label>
+      <select name="urgency" class="form-select" required>
+        <option value="High">High</option>
+        <option value="Medium">Medium</option>
+        <option value="Low">Low</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Post Request</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,3 +1,12 @@
+
+#It's the main file that runs the whole website. It sets up Flask, connects to the SQLite database, 
+#and handles user accounts through Flask-Login and Flask-Bcrypt (so passwords get hashed, not stored as plain text). 
+#Beyond that, it defines every route — the URLs someone can visit and what happens when they do: the home page, 
+#registration, login/logout, the volunteer dashboard, posting a new relief request, and matching a volunteer to a request. 
+#Each route either shows a page or processes a form, then talks to the database through the models we defined separately 
+#in models.py
+#In short: app.py is the control center — every click on the site eventually routes through this file 
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
@@ -67,7 +76,36 @@ def logout():
 def dashboard():
     open_requests = Request.query.filter_by(status="open").all()
     return render_template("dashboard.html", requests=open_requests)
-    
+
+@app.route("/post-request", methods=["GET", "POST"])
+@login_required
+def post_request():
+    if request.method == "POST":
+        new_req = Request(
+            posted_by=request.form["posted_by"],
+            resource_type=request.form["resource_type"],
+            quantity=int(request.form["quantity"]),
+            location=request.form["location"],
+            urgency=request.form["urgency"]
+        )
+        db.session.add(new_req)
+        db.session.commit()
+        flash("Request posted successfully!")
+        return redirect(url_for("dashboard"))
+    return render_template("post_request.html")
+
+@app.route("/help/<int:request_id>")
+@login_required
+def help_request(request_id):
+    req = Request.query.get(request_id)
+    if req and req.status == "open":
+        new_match = Match(request_id=req.id, volunteer_id=current_user.id)
+        req.status = "matched"
+        db.session.add(new_match)
+        db.session.commit()
+        flash(f"You've been matched to help {req.posted_by}!")
+    return redirect(url_for("dashboard"))
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
