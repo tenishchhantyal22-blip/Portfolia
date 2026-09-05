@@ -77,6 +77,29 @@ def dashboard():
     open_requests = Request.query.filter_by(status="open").all()
     return render_template("dashboard.html", requests=open_requests)
 
+@app.route("/admin")
+@login_required
+def admin_dashboard():
+    if current_user.role != "admin":
+        return "Access denied — admin only.", 403
+
+    all_requests = Request.query.all()
+    all_matches = Match.query.all()
+    return render_template("admin.html", requests=all_requests, matches=all_matches)
+
+@app.route("/fulfill/<int:request_id>")
+@login_required
+def fulfill(request_id):
+    if current_user.role != "admin":
+        return "Access denied — admin only.", 403
+
+    req = Request.query.get(request_id)
+    if req:
+        req.status = "fulfilled"
+        db.session.commit()
+        flash(f"Request from {req.posted_by} marked as fulfilled!")
+    return redirect(url_for("admin_dashboard"))
+
 @app.route("/post-request", methods=["GET", "POST"])
 @login_required
 def post_request():
