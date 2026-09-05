@@ -104,10 +104,15 @@ def fulfill(request_id):
 @login_required
 def post_request():
     if request.method == "POST":
+        qty = int(request.form["quantity"])
+        if qty <= 0:
+            flash("Quantity must be greater than zero.")
+            return redirect(url_for("post_request"))
+
         new_req = Request(
             posted_by=request.form["posted_by"],
             resource_type=request.form["resource_type"],
-            quantity=int(request.form["quantity"]),
+            quantity=qty,
             location=request.form["location"],
             urgency=request.form["urgency"]
         )
@@ -116,7 +121,7 @@ def post_request():
         flash("Request posted successfully!")
         return redirect(url_for("dashboard"))
     return render_template("post_request.html")
-
+    
 @app.route("/help/<int:request_id>")
 @login_required
 def help_request(request_id):
