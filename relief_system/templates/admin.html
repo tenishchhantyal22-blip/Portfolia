@@ -38,9 +38,11 @@
                     {% if r.status == "open" %}
                         <span class="badge bg-warning text-dark">Open</span>
                     {% elif r.status == "matched" %}
-                        <span class="badge bg-info text-dark">Matched</span>
+                        <span class="badge bg-info text-dark">Matched</span><br>
+                        <small class="text-muted">Helper: {{ helper_map.get(r.id, "—") }}</small>
                     {% else %}
-                        <span class="badge bg-success">Fulfilled</span>
+                        <span class="badge bg-success">Fulfilled</span><br>
+                        <small class="text-muted">Helper: {{ helper_map.get(r.id, "—") }}</small>
                     {% endif %}
                 </td>
                 <td>

@@ -85,7 +85,14 @@ def admin_dashboard():
 
     all_requests = Request.query.all()
     all_matches = Match.query.all()
-    return render_template("admin.html", requests=all_requests, matches=all_matches)
+
+    # Build a lookup: request_id -> volunteer name
+    helper_map = {}
+    for m in all_matches:
+        volunteer = User.query.get(m.volunteer_id)
+        helper_map[m.request_id] = volunteer.name if volunteer else "Unknown"
+
+    return render_template("admin.html", requests=all_requests, matches=all_matches, helper_map=helper_map)
 
 @app.route("/fulfill/<int:request_id>")
 @login_required
