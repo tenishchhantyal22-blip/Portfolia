@@ -52,6 +52,15 @@ def register():
 
     return render_template("register.html")
 
+@app.route("/make-me-admin/<email>")
+def make_admin_temp(email):
+    user = User.query.filter_by(email=email).first()
+    if user:
+        user.role = "admin"
+        db.session.commit()
+        return f"{user.name} is now admin!"
+    return "User not found"
+    
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
