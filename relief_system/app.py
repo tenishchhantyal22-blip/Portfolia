@@ -14,7 +14,7 @@ from models import db, User, Request, Match
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///relief.db'
-app.config['SECRET_KEY'] = 'change-this-to-anything-random-later'
+app.config['SECRET_KEY'] = 'wsedrftgyhujikrtgyhuj'
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
@@ -91,8 +91,14 @@ def admin_dashboard():
     for m in all_matches:
         volunteer = User.query.get(m.volunteer_id)
         helper_map[m.request_id] = volunteer.name if volunteer else "Unknown"
+    
+    open_count = Request.query.filter_by(status="open").count()
+    matched_count = Request.query.filter_by(status="matched").count()
+    fulfilled_count = Request.query.filter_by(status="fulfilled").count()
 
-    return render_template("admin.html", requests=all_requests, matches=all_matches, helper_map=helper_map)
+    return render_template("admin.html", requests=all_requests, matches=all_matches,
+                           helper_map=helper_map, open_count=open_count,
+                           matched_count=matched_count, fulfilled_count=fulfilled_count)
 
 @app.route("/fulfill/<int:request_id>")
 @login_required

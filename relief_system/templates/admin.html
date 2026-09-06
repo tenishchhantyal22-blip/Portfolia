@@ -56,6 +56,30 @@
     </table>
 
     <h4 class="mt-5">Total Matches: {{ matches|length }}</h4>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <canvas id="statusChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    new Chart(document.getElementById('statusChart'), {
+        type: 'pie',
+        data: {
+            labels: ['Open', 'Matched', 'Fulfilled'],
+            datasets: [{
+                data: [{{ open_count }}, {{ matched_count }}, {{ fulfilled_count }}],
+                backgroundColor: ['#ffc107', '#0dcaf0', '#198754']
+            }]
+        },
+        options: {
+            plugins: {
+                title: { display: true, text: 'Request Status Overview' }
+            }
+        }
+    });
+    </script>
 
     <a href="{{ url_for('logout') }}" class="btn btn-outline-danger mt-3">Logout</a>
 </div>
