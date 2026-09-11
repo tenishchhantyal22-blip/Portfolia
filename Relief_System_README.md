@@ -28,7 +28,7 @@ easy way to broadcast urgent requests. This system creates a simple, centralized
 ## Running Locally
 ```bash
 git clone https://github.com/tenishchhantyal22-blip/Portfolia.git
-cd Portfolia/relief_system
+cd Portfolio/relief_system
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
